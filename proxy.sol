@@ -87,8 +87,8 @@ contract proxy is Ownable
         else
         {
 	        require(stats > 2147483647, "No reason to decriment score");
-            //per function generate_contract all users will have 2147483648 added to their score, so no risk of underflow unless they try to call increment score multipule times. The require above handles this case
-            user_stats[player] = stats - 2147483648; //yes, even players that payed for the contract get their free contract reset, this means that someone could expend system resources by not completing,completing,not completing,...
+            //per function generate_contract all users will have 2147483648 added to their score, so no risk of underflow unless they try to call increment score multipule times. The require above handles this case.
+            user_stats[player] = stats - 2147483648;
         }
 	    return user_stats[player];
     }
