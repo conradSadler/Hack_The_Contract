@@ -63,7 +63,7 @@ contract proxy is Ownable
         user_stats[msg.sender] = stats + 2147483648;
         (bool success, bytes memory data) = vuln_gen[id].call{value:  10000 }(abi.encodeWithSignature("create()"));
         require(success, "Contract creation failed");
-        current_contract[msg.sender] = abi.decode(data, (address)); // data must be an address; if a user starts new contract before finishing the previous contract, they the incomplete contract will be lost
+        current_contract[msg.sender] = abi.decode(data, (address)); // data must be an address; if a user starts new contract before finishing the previous contract, then the incomplete contract will be lost(over written)
         return abi.decode(data, (address));
     }
 

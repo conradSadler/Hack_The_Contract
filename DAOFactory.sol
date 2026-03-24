@@ -62,7 +62,7 @@ contract TokenInterface {
     /// @param _to The address of the recipient
     /// @param _amount The amount of tokens to be transferred
     /// @return Whether the transfer was successful or not
-    function transferFrom(address _from, address _to, uint256 _amount) returns (bool success);
+    //function transferFrom(address _from, address _to, uint256 _amount) returns (bool success);
 
     /// @notice `msg.sender` approves `_spender` to spend `_amount` tokens on
     /// its behalf
@@ -99,7 +99,6 @@ contract Token is TokenInterface {
     }
 
     function transfer(address _to, uint256 _amount) returns (bool success) {
-        if (msg.value > 0) throw;
         if (balances[msg.sender] >= _amount && _amount > 0) {
             balances[msg.sender] -= _amount;
             balances[_to] += _amount;
@@ -109,7 +108,7 @@ contract Token is TokenInterface {
            return false;
         }
     }
-
+    /*
     function transferFrom(
         address _from,
         address _to,
@@ -129,6 +128,7 @@ contract Token is TokenInterface {
             return false;
         }
     }
+    */
 
     function approve(address _spender, uint256 _amount) returns (bool success) {
         allowed[msg.sender][_spender] = _amount;
@@ -194,12 +194,12 @@ contract ManagedAccount is ManagedAccountInterface{
     // When the contract receives a transaction without data this is called. 
     // It counts the amount of ether it receives and stores it in 
     // accumulatedInput.
-    function() {
+    function() payable {
         accumulatedInput += msg.value;
     }
 
     function payOut(address _recipient, uint _amount) returns (bool) {
-        if (msg.sender != owner || msg.value > 0 || (payOwnerOnly && _recipient != owner))
+        if (msg.sender != owner || (payOwnerOnly && _recipient != owner))
             throw;
         if (_recipient.call.value(_amount)()) {
             PayOut(_recipient, _amount);
@@ -251,7 +251,7 @@ contract TokenCreationInterface {
     // creation rate has increased
     ManagedAccount public extraBalance;
     // tracks the amount of wei given from each contributor (used for refund)
-    mapping (address => uint256) weiGiven;
+    mapping (address => uint256) public weiGiven;
 
     /// @dev Constructor setting the minimum fueling goal and the
     /// end of the Token Creation
@@ -318,8 +318,8 @@ contract TokenCreation is TokenCreationInterface, Token {
         throw;
     }
 
+    /// @notice the fucntion does not need to be payable to send eth
     function refund() {
-        if (msg.value > 0) throw;
         if (now > closingTime && !isFueled) {
             // Get extraBalance - will only succeed when called for the first time
             if (extraBalance.balance >= extraBalance.accumulatedInput())
@@ -331,6 +331,10 @@ contract TokenCreation is TokenCreationInterface, Token {
                 totalSupply -= balances[msg.sender];
                 balances[msg.sender] = 0;
                 weiGiven[msg.sender] = 0;
+            }
+            else
+            {
+                throw;
             }
         }
     }
@@ -443,7 +447,7 @@ contract DAOInterface {
     address proxy;
 
     //This stores the contract identifyer so that the proxy contract(Hack_The_Contract) can increment score 
-    uint contract_id;
+    uint contractID;
 
     // Contract that is able to create a new DAO (with the same code as
     // this one), used for splits
@@ -557,7 +561,7 @@ contract DAOInterface {
         bytes _transactionData,
         uint _debatingPeriod,
         bool _newCurator
-    )  returns (uint _proposalID);
+    )  payable returns (uint _proposalID);
 
     /// @notice Check that the proposal with the ID `_proposalID` matches the
     /// transaction which sends `_amount` with data `_transactionData`
@@ -567,13 +571,14 @@ contract DAOInterface {
     /// @param _amount The amount of wei to be sent in the proposed transaction
     /// @param _transactionData The data of the proposed transaction
     /// @return Whether the proposal ID matches the transaction data or not
+    /*
     function checkProposalCode(
         uint _proposalID,
         address _recipient,
         uint _amount,
         bytes _transactionData
     ) constant returns (bool _codeChecksOut);
-
+    */
     /// @notice Vote on proposal `_proposalID` with `_supportsProposal`
     /// @param _proposalID The proposal ID
     /// @param _supportsProposal Yes/No - support of the proposal
@@ -622,14 +627,14 @@ contract DAOInterface {
     /// @param _recipient New recipient address
     /// @dev Can only be called by the current Curator
     /// @return Whether successful or not
-    function changeAllowedRecipients(address _recipient, bool _allowed) external returns (bool _success);
+    //function changeAllowedRecipients(address _recipient, bool _allowed) external returns (bool _success);
 
 
     /// @notice Change the minimum deposit required to submit a proposal
     /// @param _proposalDeposit The new proposal deposit
     /// @dev Can only be called by this DAO (through proposals with the
     /// recipient being this DAO itself)
-    function changeProposalDeposit(uint _proposalDeposit) external;
+    //function changeProposalDeposit(uint _proposalDeposit) external;
 
     /// @notice Move rewards from the DAORewards managed account
     /// @param _toMembers If true rewards are moved to the actual reward account
@@ -651,7 +656,7 @@ contract DAOInterface {
     /// @param _to The address of the recipient
     /// @param _amount The amount of tokens to be transfered
     /// @return Whether the transfer was successful or not
-    function transferWithoutReward(address _to, uint256 _amount) returns (bool success);
+    //function transferWithoutReward(address _to, uint256 _amount) returns (bool success);
 
     /// @notice Send `_amount` tokens to `_to` from `_from` on the condition it
     /// is approved by `_from`. Prior to this getMyReward() is called.
@@ -659,19 +664,19 @@ contract DAOInterface {
     /// @param _to The address of the recipient
     /// @param _amount The amount of tokens to be transfered
     /// @return Whether the transfer was successful or not
-    function transferFromWithoutReward(
-        address _from,
-        address _to,
-        uint256 _amount
-    ) returns (bool success);
+    //function transferFromWithoutReward(
+    //    address _from,
+    //    address _to,
+     //   uint256 _amount
+    //) returns (bool success);
 
     /// @notice Doubles the 'minQuorumDivisor' in the case quorum has not been
     /// achieved in 52 weeks
     /// @return Whether the change was successful or not
-    function halveMinQuorum() returns (bool _success);
+    //function halveMinQuorum() returns (bool _success);
 
     /// @return total number of proposals ever created
-    function numberOfProposals() constant returns (uint _numberOfProposals);
+    //function numberOfProposals() constant returns (uint _numberOfProposals);
 
     /// @param _proposalID Id of the new curator proposal
     /// @return Address of the new DAO
@@ -684,7 +689,7 @@ contract DAOInterface {
     /// @notice If the caller is blocked by a proposal whose voting deadline
     /// has exprired then unblock him.
     /// @return Whether the account is blocked (not allowed to transfer tokens) or not.
-    function unblockMe() returns (bool);
+    //function unblockMe() returns (bool);
 
     event ProposalAdded(
         uint indexed proposalID,
@@ -713,14 +718,14 @@ contract DAO is DAOInterface, Token, TokenCreation {
         uint _closingTime,
         address _privateCreation,
         address _proxy,
-        uint _contract_id
+        uint _contractID
     ) TokenCreation(_minTokensToCreate, _closingTime, _privateCreation) {
 
         proxy = _proxy;
         curator = _curator;
         daoCreator = _daoCreator;
         proposalDeposit = _proposalDeposit;
-        contract_id = _contract_id;
+        contractID = _contractID;
         rewardAccount = new ManagedAccount(address(this), false);
         DAOrewardAccount = new ManagedAccount(address(this), false);
         if (address(rewardAccount) == 0)
@@ -755,7 +760,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
         bytes _transactionData,
         uint _debatingPeriod,
         bool _newCurator
-    )  returns (uint _proposalID) {
+    )  payable returns (uint _proposalID) {
         if (balanceOf(msg.sender) == 0) throw;
         // Sanity check
         if (_newCurator && (
@@ -815,7 +820,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
         );
     }
 
-
+    /*
     function checkProposalCode(
         uint _proposalID,
         address _recipient,
@@ -826,13 +831,12 @@ contract DAO is DAOInterface, Token, TokenCreation {
         Proposal p = proposals[_proposalID];
         return p.proposalHash == sha3(_recipient, _amount, _transactionData);
     }
-
+    */
 
     function vote(
         uint _proposalID,
         bool _supportsProposal
     )   returns (uint _voteID) {
-        if (msg.value > 0) throw;
         if (balanceOf(msg.sender) == 0) throw;
         Proposal p = proposals[_proposalID];
         if (p.votedYes[msg.sender]
@@ -866,7 +870,6 @@ contract DAO is DAOInterface, Token, TokenCreation {
         uint _proposalID,
         bytes _transactionData
     )  returns (bool _success) {
-        if (msg.value > 0) throw;
         Proposal p = proposals[_proposalID];
 
         uint waitPeriod = p.newCurator
@@ -960,7 +963,6 @@ contract DAO is DAOInterface, Token, TokenCreation {
         uint _proposalID,
         address _newCurator
     ) returns (bool _success) {
-        if (msg.value > 0) throw;
         if (balanceOf(msg.sender) == 0) throw;
         Proposal p = proposals[_proposalID];
 
@@ -1046,7 +1048,6 @@ contract DAO is DAOInterface, Token, TokenCreation {
 
 
     function retrieveDAOReward(bool _toMembers) external  returns (bool _success) {
-        if (msg.value > 0) throw;
         DAO dao = DAO(msg.sender);
 
         if ((rewardToken[msg.sender] * DAOrewardAccount.accumulatedInput()) /
@@ -1069,13 +1070,11 @@ contract DAO is DAOInterface, Token, TokenCreation {
     }
 
     function getMyReward()  returns (bool _success) {
-        if (msg.value > 0) throw;
         return withdrawRewardFor(msg.sender);
     }
 
 
     function withdrawRewardFor(address _account) internal returns (bool _success) {
-        if (msg.value > 0) throw;
         if ((balanceOf(_account) * rewardAccount.accumulatedInput()) / totalSupply < paidOut[_account])
             throw;
 
@@ -1102,37 +1101,37 @@ contract DAO is DAOInterface, Token, TokenCreation {
     }
 
 
-    function transferWithoutReward(address _to, uint256 _value) returns (bool success) {
-        if (!getMyReward())
-            throw;
-        return transfer(_to, _value);
-    }
+    //function transferWithoutReward(address _to, uint256 _value) returns (bool success) {
+   //     if (!getMyReward())
+   //         throw;
+   //     return transfer(_to, _value);
+    //}
 
 
-    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
-        if (isFueled
-            && now > closingTime
-            && !isBlocked(_from)
-            && transferPaidOut(_from, _to, _value)
-            && super.transferFrom(_from, _to, _value)) {
+    //function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
+     //   if (isFueled
+     //       && now > closingTime
+      //      && !isBlocked(_from)
+      //      && transferPaidOut(_from, _to, _value)
+       //     && super.transferFrom(_from, _to, _value)) {
 
-            return true;
-        } else {
-            throw;
-        }
-    }
+         //   return true;
+        //} else {
+        //    throw;
+        //}
+   // }
 
 
-    function transferFromWithoutReward(
-        address _from,
-        address _to,
-        uint256 _value
-    ) returns (bool success) {
+    //function transferFromWithoutReward(
+    //    address _from,
+    //    address _to,
+    //    uint256 _value
+    //) returns (bool success) {
 
-        if (!withdrawRewardFor(_from))
-            throw;
-        return transferFrom(_from, _to, _value);
-    }
+    //    if (!withdrawRewardFor(_from))
+    //       throw;
+    //   return transferFrom(_from, _to, _value);
+    //}
 
 
     function transferPaidOut(
@@ -1149,7 +1148,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
         return true;
     }
 
-
+    /*
     function changeProposalDeposit(uint _proposalDeposit)  external {
         if (msg.value > 0) throw;
         if (msg.sender != address(this) || _proposalDeposit > (actualBalance() + rewardToken[address(this)])
@@ -1159,8 +1158,9 @@ contract DAO is DAOInterface, Token, TokenCreation {
         }
         proposalDeposit = _proposalDeposit;
     }
+    */
 
-
+    /*
     function changeAllowedRecipients(address _recipient, bool _allowed) external returns (bool _success) {
         if (msg.value > 0) throw;
         if (msg.sender != curator)
@@ -1169,7 +1169,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
         AllowedRecipientChanged(_recipient, _allowed);
         return true;
     }
-
+    */
 
     function isRecipientAllowed(address _recipient) internal returns (bool _isAllowed) {
         if (allowedRecipients[_recipient]
@@ -1193,7 +1193,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
             (_value * totalSupply) / (3 * (actualBalance() + rewardToken[address(this)]));
     }
 
-
+    /*
     function halveMinQuorum() returns (bool _success) {
         // this can only be called after `quorumHalvingPeriod` has passed or at anytime
         // by the curator with a delay of at least `minProposalDebatePeriod` between the calls
@@ -1206,16 +1206,16 @@ contract DAO is DAOInterface, Token, TokenCreation {
             return false;
         }
     }
-
+    */
     function createNewDAO(address _newCurator) internal returns (DAO _newDAO) {
         NewCurator(_newCurator);
-        return daoCreator.createDAO(_newCurator, 0, 0, now + splitExecutionPeriod,address(0),0);
+        return daoCreator.createDAO(_newCurator, 0, 0, now + splitExecutionPeriod);
     }
 
-    function numberOfProposals() constant returns (uint _numberOfProposals) {
+    //function numberOfProposals() constant returns (uint _numberOfProposals) {
         // Don't count index 0. It's used by isBlocked() and exists from start
-        return proposals.length - 1;
-    }
+    //    return proposals.length - 1;
+   // }
 
     function getNewDAOAddress(uint _proposalID) constant returns (address _newDAO) {
         return proposals[_proposalID].splitData[0].newDAO;
@@ -1235,44 +1235,58 @@ contract DAO is DAOInterface, Token, TokenCreation {
 
     function powned() public returns (bool) //the user must call to get points
     {
-        if(address(this).balance == 0 )
+        if(address(this).balance < 3000)
         {
-            if(proxy != address(0) && proxy.call(bytes4(keccak256("increment_score(uint256,address)")),  contract_id, msg.sender))
+            if(proxy != address(0) && proxy.call(bytes4(sha3("increment_score(uint256,address)")),  contractID, msg.sender))
             {
                 return true;
             }
-            throw;
         }
+        throw;
     }
-
+    /*
     function unblockMe() returns (bool) {
         return isBlocked(msg.sender);
     }
+    */
 }
-contract factoryTest
+
+contract DAOFactory
 {
     address constant owner = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
     ///@notice This contract and all factory contracts are owned by the proxy contract. Only the proxy contract should be able to create a new clone of the vulnerable contract
     function factoryTest() {}
-    ///@notice This function is only callabe by the proxy contract and creates a new testDAO smart contract with a time stamp of 5min from present(not used), the contract identifyer of 1, and the proxy contract address
+    ///@notice This function is only callable by the proxy contract and creates a new DAO smart contract
     ///@notice All value sent to function by proxy is passed onto the newly created vuln contract
+    ///@notice new DAO is created with: curator = owner , daoCreator = owner , proposalDeposit = 2222 , minTokensToCreate = 1e18 , closingTime =  5 mins from now  ,  privateCreation = 0 (means the creation is public) , proxy = owner , contractID = 1
     function create() external payable returns (address)
     {
-        require(msg.sender == owner);
-        DAO newReEntrancy = new DAO(**Add arguments**); //passing the current time + 5 minutes and the vuln_id of 1 to the newly created vuln contract's contructor
+        if(msg.sender != owner)
+        {
+            throw;
+        }
+        DAO newReEntrancy = new DAO(msg.sender, DAO_Creator(msg.sender), 2222, 1e18,block.timestamp+300, 0x0000000000000000000000000000000000000000, 0x5FbDB2315678afecb367f032d93F642f64180aa3,1);
         newReEntrancy.fall.value(msg.value)(); //deposit function in vulnerable contract
         return address(newReEntrancy );
     }
 }
 
+/*
+        address _curator,
+        DAO_Creator _daoCreator,
+        uint _proposalDeposit,
+        uint _minTokensToCreate,
+        uint _closingTime,
+        address _privateCreation,
+        address _proxy,
+        uint _contractID
+*/
 contract DAO_Creator {
     function createDAO(
         address _curator,
         uint _proposalDeposit,
         uint _minTokensToCreate,
-        uint _closingTime,
-        address _proxy,
-        uint _contract_id
+        uint _closingTime
     ) returns (DAO _newDAO) {
 
         return new DAO(
