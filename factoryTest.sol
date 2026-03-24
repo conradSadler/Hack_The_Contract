@@ -66,7 +66,7 @@ contract factoryTest is Ownable
 {
     ///@notice This contract and all factory contracts are owned by the proxy contract. Only the proxy contract should be able to create a new clone of the vulnerable contract
     constructor()  Ownable(0x5FbDB2315678afecb367f032d93F642f64180aa3){}
-    ///@notice This function is only callabe by the proxy contract and creates a new testDAO smart contract with a time stamp of 5min from present(not used), the contract identifyer of 1, and the proxy contract address
+    ///@notice This function is only callable by the proxy contract and creates a new testDAO smart contract with a time stamp of 5min from present(not used), the contract identifyer of 1, and the proxy contract address
     ///@notice All value sent to function by proxy is passed onto the newly created vuln contract
     function create() external onlyOwner payable returns (address)
     {
