@@ -379,21 +379,21 @@ to automate organizational governance and decision-making.
 
 
 contract DAOInterface {
-
+    // @notice Shortened all the following periods, real time units are commented next to lines
     // The amount of days for which people who try to participate in the
     // creation by calling the fallback function will still get their ether back
-    uint constant creationGracePeriod = 40 days;
+    uint constant creationGracePeriod = 40 minutes; //days
     // The minimum debate period that a generic proposal can have
-    uint constant minProposalDebatePeriod = 2 weeks;
+    uint constant minProposalDebatePeriod = 2 minutes; //weeks
     // The minimum debate period that a split proposal can have
-    uint constant minSplitDebatePeriod = 1 weeks;
+    uint constant minSplitDebatePeriod = 1 minutes; //weeks
     // Period of days inside which it's possible to execute a DAO split
     uint constant splitExecutionPeriod = 3600;
     // Period of time after which the minimum Quorum is halved
-    uint constant quorumHalvingPeriod = 25 weeks;
+    uint constant quorumHalvingPeriod = 25 minutes; //weeks
     // Period after which a proposal is closed
     // (used in the case `executeProposal` fails because it throws)
-    uint constant executeProposalPeriod = 10 days;
+    uint constant executeProposalPeriod = 10 minutes; //days
     // Denotes the maximum proposal deposit that can be given. It is given as
     // a fraction of total Ether spent plus balance of the DAO
     uint constant maxDepositDivisor = 100;
@@ -818,6 +818,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
             _newCurator,
             _description
         );
+        return _proposalID;
     }
 
     /*
