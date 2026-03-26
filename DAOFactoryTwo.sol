@@ -451,7 +451,7 @@ contract DAOInterface {
 
     // Contract that is able to create a new DAO (with the same code as
     // this one), used for splits
-    DAO_Creator public daoCreator;
+    DAOFactoryTwo public daoCreator;
 
     // A proposal with `newCurator == false` represents a transaction
     // to be issued by this DAO
@@ -520,7 +520,7 @@ contract DAOInterface {
     // This is the constructor: it can not be overloaded so it is commented out
     //  function DAO(
         //  address _curator,
-        //  DAO_Creator _daoCreator,
+        //  DAOFactoryTwo _daoCreator,
         //  uint _proposalDeposit,
         //  uint _minTokensToCreate,
         //  uint _closingTime,
@@ -619,7 +619,7 @@ contract DAOInterface {
     /// updates the contract of the DAO by sending all ether and rewardTokens
     /// to the new DAO. The new DAO needs to be approved by the Curator
     /// @param _newContract the address of the new contract
-    function newContract(address _newContract);
+    //function newContract(address _newContract);
 
 
     /// @notice Add a new possible recipient `_recipient` to the whitelist so
@@ -709,10 +709,9 @@ contract DAO is DAOInterface, Token, TokenCreation {
 
     // Modifier that allows only shareholders to vote and create new proposals
 
-
     function DAO(
         address _curator,
-        DAO_Creator _daoCreator,
+        DAOFactoryTwo _daoCreator,
         uint _proposalDeposit,
         uint _minTokensToCreate,
         uint _closingTime,
@@ -740,6 +739,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
         allowedRecipients[curator] = true;
     }
 
+    //This function replaces function ()
     function fall() payable returns (bool success) {
         if (now < closingTime + creationGracePeriod && msg.sender != address(extraBalance))
             return createTokenProxy(msg.sender);
@@ -820,7 +820,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
         );
         return _proposalID;
     }
-
+    //The following function was commented out to reduced code size below max bytes of 24KB
     /*
     function checkProposalCode(
         uint _proposalID,
@@ -833,7 +833,6 @@ contract DAO is DAOInterface, Token, TokenCreation {
         return p.proposalHash == sha3(_recipient, _amount, _transactionData);
     }
     */
-
     function vote(
         uint _proposalID,
         bool _supportsProposal
@@ -964,9 +963,8 @@ contract DAO is DAOInterface, Token, TokenCreation {
         uint _proposalID,
         address _newCurator
     ) returns (bool _success) {
-        if (balanceOf(msg.sender) == 0) throw;
+        if (balanceOf(msg.sender) == 0) throw; //good
         Proposal p = proposals[_proposalID];
-
         // Sanity check
 
         if (now < p.votingDeadline  // has the voting deadline arrived?
@@ -992,34 +990,32 @@ contract DAO is DAOInterface, Token, TokenCreation {
             if (address(p.splitData[0].newDAO) == 0)
                 throw;
             // should never happen
-            if (this.balance < sumOfProposalDeposits)
+            if (address(this).balance < sumOfProposalDeposits)
                 throw;
             p.splitData[0].splitBalance = actualBalance();
             p.splitData[0].rewardToken = rewardToken[address(this)];
             p.splitData[0].totalSupply = totalSupply;
             p.proposalPassed = true;
         }
-
+        
         // Move ether and assign new Tokens
         uint fundsToBeMoved =(balances[msg.sender] * p.splitData[0].splitBalance) /p.splitData[0].totalSupply;
         if (p.splitData[0].newDAO.createTokenProxy.value(fundsToBeMoved)(msg.sender) == false)
             throw;
 
-
         // Assign reward rights to new DAO
-        uint rewardTokenToBeMoved =
-            (balances[msg.sender] * p.splitData[0].rewardToken) /
-            p.splitData[0].totalSupply;
+        uint rewardTokenToBeMoved = (balances[msg.sender] * p.splitData[0].rewardToken) / p.splitData[0].totalSupply;
 
-        uint paidOutToBeMoved = DAOpaidOut[address(this)] * rewardTokenToBeMoved /
-            rewardToken[address(this)];
+        uint paidOutToBeMoved = DAOpaidOut[address(this)] * rewardTokenToBeMoved / (rewardToken[address(this)] + 1); //there is a division by zero potential here if there are no reward tokens, this threw a EVM error InvalidFEOpcode
 
         rewardToken[address(p.splitData[0].newDAO)] += rewardTokenToBeMoved;
+        
         if (rewardToken[address(this)] < rewardTokenToBeMoved)
             throw;
         rewardToken[address(this)] -= rewardTokenToBeMoved;
 
         DAOpaidOut[address(p.splitData[0].newDAO)] += paidOutToBeMoved;
+
         if (DAOpaidOut[address(this)] < paidOutToBeMoved)
             throw;
         DAOpaidOut[address(this)] -= paidOutToBeMoved;
@@ -1030,9 +1026,35 @@ contract DAO is DAOInterface, Token, TokenCreation {
         totalSupply -= balances[msg.sender];
         balances[msg.sender] = 0;
         paidOut[msg.sender] = 0;
+
         return true;
     }
+    //The following function was commented out to reduced code size below max bytes of 24KB
+    /*
+    function debugCalculateRewardToken(address _user, uint _proposalIndex) public constant returns (uint) {
+        Proposal p = proposals[_proposalIndex];
+        return (balances[_user] * p.splitData[0].rewardToken) / p.splitData[0].totalSupply;
+    }
+    */
+    //The following function was commented out to reduced code size below max bytes of 24KB
+    /*
+    function debugCalculatePaidOut(uint _rewardTokenToBeMoved) public constant returns (uint) {
+        return (DAOpaidOut[address(this)] * _rewardTokenToBeMoved) / (rewardToken[address(this)]+1);
+    }
+    //The following function was commented out to reduced code size below max bytes of 24KB
+    function debugCanPerformMove(uint _rewardMove, uint _paidOutMove) public constant returns (bool rewardOk, bool paidOutOk) {
+        rewardOk = (rewardToken[address(this)] < _rewardMove);
+        paidOutOk = (DAOpaidOut[address(this)] < _paidOutMove);
+        return (rewardOk,paidOutOk);
+    }
 
+    //The following function was commented out to reduced code size below max bytes of 24KB
+    function debugUserBurnData(address _user) public constant returns (uint currentBalance, uint currentPaidOut) {
+        return (balances[_user], paidOut[_user]);
+    }
+    */
+    //The following function was commented out to reduced code size below max bytes of 24KB
+    /*
     function newContract(address _newContract){
         if (msg.sender != address(this) || !allowedRecipients[_newContract]) return;
         // move all ether
@@ -1046,7 +1068,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
         DAOpaidOut[_newContract] += DAOpaidOut[address(this)];
         DAOpaidOut[address(this)] = 0;
     }
-
+    */
 
     function retrieveDAOReward(bool _toMembers) external  returns (bool _success) {
         DAO dao = DAO(msg.sender);
@@ -1100,40 +1122,42 @@ contract DAO is DAOInterface, Token, TokenCreation {
             throw;
         }
     }
+    //The following functions were commented out to reduced code size below max bytes of 24KB
+    /*
+    function transferWithoutReward(address _to, uint256 _value) returns (bool success) {
+        if (!getMyReward())
+            throw;
+        return transfer(_to, _value);
+    }
 
 
-    //function transferWithoutReward(address _to, uint256 _value) returns (bool success) {
-   //     if (!getMyReward())
-   //         throw;
-   //     return transfer(_to, _value);
-    //}
+    function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
+        if (isFueled
+            && now > closingTime
+            && !isBlocked(_from)
+            && transferPaidOut(_from, _to, _value)
+            && super.transferFrom(_from, _to, _value)) {
 
+            return true;
+        } else {
+            throw;
+        }
+    }
+    */
 
-    //function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
-     //   if (isFueled
-     //       && now > closingTime
-      //      && !isBlocked(_from)
-      //      && transferPaidOut(_from, _to, _value)
-       //     && super.transferFrom(_from, _to, _value)) {
+    //The following function was commented out to reduced code size below max bytes of 24KB
+    /*
+    function transferFromWithoutReward(
+        address _from,
+        address _to,
+        uint256 _value
+    ) returns (bool success) {
 
-         //   return true;
-        //} else {
-        //    throw;
-        //}
-   // }
-
-
-    //function transferFromWithoutReward(
-    //    address _from,
-    //    address _to,
-    //    uint256 _value
-    //) returns (bool success) {
-
-    //    if (!withdrawRewardFor(_from))
-    //       throw;
-    //   return transferFrom(_from, _to, _value);
-    //}
-
+        if (!withdrawRewardFor(_from))
+           throw;
+       return transferFrom(_from, _to, _value);
+    }
+    */
 
     function transferPaidOut(
         address _from,
@@ -1149,6 +1173,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
         return true;
     }
 
+    //The following function was commented out to reduced code size below max bytes of 24KB
     /*
     function changeProposalDeposit(uint _proposalDeposit)  external {
         if (msg.value > 0) throw;
@@ -1161,6 +1186,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
     }
     */
 
+    //The following function was commented out to reduced code size below max bytes of 24KB
     /*
     function changeAllowedRecipients(address _recipient, bool _allowed) external returns (bool _success) {
         if (msg.value > 0) throw;
@@ -1193,7 +1219,7 @@ contract DAO is DAOInterface, Token, TokenCreation {
         return totalSupply / minQuorumDivisor +
             (_value * totalSupply) / (3 * (actualBalance() + rewardToken[address(this)]));
     }
-
+    //The following function was commented out to reduced code size below max bytes of 24KB
     /*
     function halveMinQuorum() returns (bool _success) {
         // this can only be called after `quorumHalvingPeriod` has passed or at anytime
@@ -1212,12 +1238,13 @@ contract DAO is DAOInterface, Token, TokenCreation {
         NewCurator(_newCurator);
         return daoCreator.createDAO(_newCurator, 0, 0, now + splitExecutionPeriod);
     }
-
+    //The following function was commented out to reduced code size below max bytes of 24KB
+    /*
     //function numberOfProposals() constant returns (uint _numberOfProposals) {
-        // Don't count index 0. It's used by isBlocked() and exists from start
-    //    return proposals.length - 1;
-   // }
-
+        //Don't count index 0. It's used by isBlocked() and exists from start
+        return proposals.length - 1;
+    }
+    */
     function getNewDAOAddress(uint _proposalID) constant returns (address _newDAO) {
         return proposals[_proposalID].splitData[0].newDAO;
     }
@@ -1245,6 +1272,8 @@ contract DAO is DAOInterface, Token, TokenCreation {
         }
         throw;
     }
+
+    //The following function was commented out to reduced code size below max bytes of 24KB
     /*
     function unblockMe() returns (bool) {
         return isBlocked(msg.sender);
@@ -1252,38 +1281,24 @@ contract DAO is DAOInterface, Token, TokenCreation {
     */
 }
 
-contract DAOFactory
+contract DAOFactoryTwo
 {
     address constant owner = 0x5FbDB2315678afecb367f032d93F642f64180aa3;
     ///@notice This contract and all factory contracts are owned by the proxy contract. Only the proxy contract should be able to create a new clone of the vulnerable contract
-    function factoryTest() {}
     ///@notice This function is only callable by the proxy contract and creates a new DAO smart contract
     ///@notice All value sent to function by proxy is passed onto the newly created vuln contract
-    ///@notice new DAO is created with: curator = owner , daoCreator = owner , proposalDeposit = 2222 , minTokensToCreate = 1e18 , closingTime =  5 mins from now  ,  privateCreation = 0 (means the creation is public) , proxy = owner , contractID = 1
-    ///@notice DAO_Creator(this) is incorrect, but it only will matter if you call splitDAO
+    ///@notice new DAO is created with: curator = owner , daoCreator = owner , proposalDeposit = 2222 , minTokensToCreate = 5000 wei equivalent tokens , closingTime =  5 mins from now  ,  privateCreation = 0 (means the creation is public) , proxy = owner , contractID = 1
     function create() external payable returns (address)
     {
         if(msg.sender != owner)
         {
             throw;
         }
-        DAO newReEntrancy = new DAO(msg.sender, DAO_Creator(this), 2222, 1e18,block.timestamp+300, 0x0000000000000000000000000000000000000000, 0x5FbDB2315678afecb367f032d93F642f64180aa3,1);
+        DAO newReEntrancy = new DAO(msg.sender, DAOFactoryTwo(this), 2222, 5000,block.timestamp+300, 0x0000000000000000000000000000000000000000, 0x5FbDB2315678afecb367f032d93F642f64180aa3,1);
         newReEntrancy.fall.value(msg.value)(); //deposit function in vulnerable contract
-        return address(newReEntrancy );
+        return address(newReEntrancy);
     }
-}
 
-/*
-        address _curator,
-        DAO_Creator _daoCreator,
-        uint _proposalDeposit,
-        uint _minTokensToCreate,
-        uint _closingTime,
-        address _privateCreation,
-        address _proxy,
-        uint _contractID
-*/
-contract DAO_Creator {
     function createDAO(
         address _curator,
         uint _proposalDeposit,
@@ -1293,7 +1308,7 @@ contract DAO_Creator {
 
         return new DAO(
             _curator,
-            DAO_Creator(this),
+            DAOFactoryTwo(this),
             _proposalDeposit,
             _minTokensToCreate,
             _closingTime,
