@@ -1,0 +1,58 @@
+{% extends "admin/challenges/create.html" %}
+
+{% block type %}
+<input type="hidden" value="blockchain" name="type" id="chaltype">
+{% endblock %}
+
+{% block value %}
+<div class="form-group">
+    <label>Value
+        <small class="form-text text-muted">Points awarded when the exploit is verified on-chain.</small>
+    </label>
+    <input type="number" class="form-control" name="value" placeholder="100" required>
+</div>
+
+<hr>
+<h6 class="text-muted">Blockchain Settings</h6>
+
+<div class="form-group">
+    <label>Vuln ID
+        <small class="form-text text-muted">
+            Must be a power of 2 - matches proxy.vuln_gen[id] and the bitmask in user_stats.
+        </small>
+    </label>
+        <select class="form-control" name="vuln_id" required>
+        <option value="1">1 - Reentrancy Easy (DAOFactory)</option>
+        <option value="2">2 - Reentrancy Hard (DAOFactoryTwo)</option>
+        <option value="4">4 - TBD </option>
+        <option value="8">8 - TBD </option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label>Proxy Contract Address</label>
+    <input type="text" class="form-control" name="proxy_address" placeholder="0x..." maxlength="42" required>
+</div>
+
+<div class="form-group">
+    <label>Chain ID</label>
+    <input type="number" class="form-control" name="chain_id" value="1337" required>
+</div>
+
+<div class="form-group">
+    <label>RPC URL
+        <small class="form-text text-muted">Optional - falls back to BLOCKCHAIN_RPC_URL env var.</small>
+    </label>
+    <input type="text" class="form-control" name="rpc_url" placeholder="http://host.docker.internal:8545">
+</div>
+
+
+<div class="form-group">
+    <label>Solidity Source Code
+        <small class="form-text text-muted">Shown to players on the Source Code tab.</small>
+    </label>
+    <textarea class="form-control" name="source_code" rows="12"
+              style="font-family:monospace; font-size:12px;"
+              placeholder="// SPDX-License-Identifier: MIT&#10;pragma solidity ^0.8.22;"></textarea>
+</div>
+{% endblock %}
