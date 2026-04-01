@@ -1,0 +1,103 @@
+<!-- config.html - served at /admin/plugins/ctfd-blockchain-plugin -->
+<!-- Loaded as a Jinja template by CTFd's admin panel -->
+
+<div class="container mt-4">
+    <h2>Blockchain Challenge Plugin</h2>
+    <hr>
+
+    <h5>Global Settings</h5>
+    <p class="text-muted">
+        These settings apply to all blockchain challenges unless overridden per-challenge.
+    </p>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">RPC URL env var</dt>
+                <dd class="col-sm-9">
+                    <code>BLOCKCHAIN_RPC_URL</code> -
+                    set in your server environment to point to your EVM node
+                    (e.g. <code>http://host.docker.internal:8545</code> for Anvil).
+                    Each challenge can also override this in its own settings.
+                </dd>
+
+                <dt class="col-sm-3">Current value</dt>
+                <dd class="col-sm-9">
+                    <code>{{ config.get("BLOCKCHAIN_RPC_URL") or "<em>not set, falling back to http://host.docker.internal:8545</em>" }}</code>
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <h5>Required Proxy Contract Interface</h5>
+    <p class="text-muted">
+        Your proxy contract must expose these two functions for the plugin to work:
+    </p>
+    <pre style="background:#1e1e2e; color:#cdd6f4; border-radius:6px; padding:16px; font-size:13px;">
+/// Deploy a fresh vulnerable instance for msg.sender.
+/// Must emit ChallengeDeployed.
+function deployChallenge(uint256 challengeIndex)
+    external returns (address instance);
+
+/// On-chain completion check - called by CTFd backend via eth_call.
+/// Returns true once the player has successfully exploited their instance.
+function isCompleted(address user, uint256 challengeIndex)
+    external view returns (bool);
+
+event ChallengeDeployed(
+    address indexed user,
+    uint256 challengeIndex,
+    address instance
+);
+    </pre>
+
+    <h5>Challenge Index Mapping</h5>
+    <p class="text-muted">
+        Map each <code>challengeIndex</code> to the correct factory when creating challenges:
+    </p>
+    <table class="table table-sm table-bordered">
+        <thead class="thead-light">
+            <tr>
+                <th>Vuln ID</th>
+                <th>Factory</th>
+                <th>Challenge</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>1</td><td>DAOFactory</td><td>Reentrancy Hard</td><td>DAO 1, Solidity 0.4.26</td></tr>
+            <tr><td>2</td><td>DAOFactoryTwo</td><td>Reentrancy Medium</td><td>DAO 2, Solidity 0.4.26</td></tr>
+            <tr><td>4</td><td>TBD</td><td>TBD</td><td></td></tr>
+            <tr><td>8</td><td>TBD</td><td>TBD</td><td></td></tr>
+        </tbody>
+    </table>
+
+    <h5>Plugin API Endpoints</h5>
+    <table class="table table-sm table-bordered">
+        <thead class="thead-light">
+            <tr><th>Method</th><th>Path</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>GET</td>
+                <td><code>/api/v1/blockchain/challenge/&lt;id&gt;/info</code></td>
+                <td>Returns chain_id, proxy address, index, ABI, source code</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td><code>/api/v1/blockchain/challenge/&lt;id&gt;/deployment</code></td>
+                <td>Player's current deployed contract address</td>
+            </tr>
+            <tr>
+                <td>POST</td>
+                <td><code>/api/v1/blockchain/challenge/&lt;id&gt;/deployment</code></td>
+                <td>Records a newly deployed instance address</td>
+            </tr>
+            <tr>
+                <td>POST</td>
+                <td><code>/api/v1/blockchain/challenge/&lt;id&gt;/verify</code></td>
+                <td>Triggers on-chain verification and awards CTFd points</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
