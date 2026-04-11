@@ -1295,7 +1295,7 @@ contract DAOFactoryTwo
             throw;
         }
         DAO newReEntrancy = new DAO(msg.sender, DAOFactoryTwo(this), 2222, 5000,block.timestamp+300, 0x0000000000000000000000000000000000000000, 0x5FbDB2315678afecb367f032d93F642f64180aa3,1);
-        newReEntrancy.fall.value(msg.value)(); //deposit function in vulnerable contract
+        newReEntrancy.call.value(msg.value)(); //deposit function in vulnerable contract
         return address(newReEntrancy);
     }
 
