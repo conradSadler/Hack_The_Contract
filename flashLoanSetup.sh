@@ -3,7 +3,7 @@
 # 
 #   Description: Automate the deployement of contracts on foundry for Flash loan attack ALSO fund the proxy contract
 #
-#   Author: Conrad Sadler
+#   Author: ConRad Sadler
 # ------------------------------------------------------------------
 # Make Proxy, assumed deployed to 0x5FbDB2315678afecb367f032d93F642f64180aa3
 forge create src/proxy.sol:proxy --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 --broadcast --constructor-args 69
