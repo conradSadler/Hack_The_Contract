@@ -24,9 +24,9 @@ contract sDAI  is ERC20
         eDAI = _eDAI;
     }
 
-    function burn(address account,uint256  amount) public //you want the liquidator to deposite sDAI for eDAI, not eDAI for eDAI
+    function burn(address account,uint256  amount) public
     {
-        require(msg.sender == eDAI, "Caller must only be eDAI contract");
+        require(msg.sender == lender || msg.sender == eDAI, "Caller must only be eDAI contract");
         _burn(account,amount);
     }
 
@@ -36,15 +36,8 @@ contract sDAI  is ERC20
         _mint(account,amount);
     }
 
-    function destroy(address account,uint256  amount) public
+    function greaterThanMillion(address account) public view
     {
-        require(msg.sender == lender, "Only the lender can call this function");
-        require(balanceOf(account)>= amount,"Attempting to destroy more sDAI than balance");
-         _burn(account, amount);
-    }
-
-    function greaterThanZero(address account) public view
-    {
-        require(balanceOf(account) > 0,"Users account in not greater than zero sDAI");
+        require(balanceOf(account) > 1000000,"Users account in not greater than zero sDAI");
     }
 }

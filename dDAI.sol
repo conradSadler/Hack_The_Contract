@@ -12,19 +12,19 @@ contract DToken  is ERC20
     {
         owner = _owner;
     }
-
+    //notice:  only the eDAI contract can call this function
     function leverD(address account, uint256 amount) public
     {
-        require(msg.sender == eDAI); // only the euler contract can call this function
+        require(msg.sender == eDAI);
         _mint(account,amount);
     }
-
+    //notice:  only the eDAI contract can call this function
     function deLever(address account, uint256 amount) public
     {
-        require(msg.sender == eDAI); // only the euler contract can call this function
+        require(msg.sender == eDAI);
         _burn(account,amount);
     }
-
+    //notice: Only the owner can change the eDAI
     function setEDAI(address _eDAI) public
     {
         require(msg.sender == owner, "Only the owner can change the eDAI");
