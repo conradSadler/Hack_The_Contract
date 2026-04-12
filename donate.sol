@@ -9,13 +9,11 @@ contract donate
     address public eDAI;
     address public sDAI;
     address public liquidator;
-    uint256 public liquidSplit; //need setter, default to 27000000
+    uint256 public liquidSplit;
     uint256 public amount;
     uint256 public multiplyer;
     uint256 public donationAmount;
 
-    //(bool something, ) = address.call(abi.encodeWithSignature("function", args));
-    // require(something, "Flash loan was not successfully created");
     constructor(address _owner, address _euler, address _lender, address _eDAI, address _sDAI, address _liquidator, uint256 _liquidSplit, uint256 _amount, uint256 _multiplyer,uint256 _donationAmount)
     {
         owner = _owner;

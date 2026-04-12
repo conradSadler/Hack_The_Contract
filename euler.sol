@@ -25,7 +25,7 @@ contract euler
         require(msg.sender == owner, "Only the owner can change the eDAI");
         eDAI = _eDAI;
     }
-    //liquidateAccount(address,uint256)", account,amountToLiq
+
     //This function is called by those who want to liquidate unsolivent accounts
     function liquidateAccount(address account, uint256 amount) public
     {
@@ -37,7 +37,7 @@ contract euler
 
         uint256 amountE = abi.decode(accountAmount, (uint256)); //get the balance of the unsolivent account as number
 
-        uint256 amountGained = (amount*(100+reward)) / 100 ;// Example of max liquidation at 20% on 50 tokens:  (50 * (100+20))/100
+        uint256 amountGained = (amount*(100+reward)) / 100 ;
 
         require(amountGained <= amountE, "Liquidation amount + reward is above insolvent accounts eDAI");
 
@@ -57,8 +57,8 @@ contract euler
          uint256 amountD = abi.decode(dBalance, (uint256));
         if(amountD != 0)
         {
-            uint256 eToD = (amountE * 100) / amountD; // (27 * 100) /54
-            uint256 liquidationRate = 100000/(eToD *100); // 100000/(50*100)
+            uint256 eToD = (amountE * 100) / amountD;
+            uint256 liquidationRate = 100000/(eToD *100);
             if(liquidationRate > 20)
             {
                 liquidateOptions[account] = 20;
@@ -84,22 +84,40 @@ contract euler
         }
     }
     
-
+    /// @notice This function is used to increase a account's leverage
+    /// @param multiplyer this must be below 20 (can leverage accounts assets by less than 20x)
     function leverage(uint256 multiplyer) public
     {
         uint256 accountHealth = healthCheck(msg.sender);
         require(accountHealth  <= 10, "Can not leverage assets becasue eDAI is not 1 to 1 with dDAI");
-        require(multiplyer < 20, "multilyer must be less than 20x");
-        uint256 currentMul = multiplyerTable[msg.sender];
-        multiplyerTable[msg.sender] = multiplyer;
-        uint256 increase = multiplyer - currentMul;
+        require(multiplyer < 20 && multiplyer > 1, "multilyer must be less than 20x and greater than 1");
+        uint256 startingAmount = multiplyerTable[msg.sender];
 
         (bool getAmount, bytes memory accountAmount) = eDAI.call(abi.encodeWithSignature("balanceOf(address)", msg.sender));
         require(getAmount, "Could not get the callers balance of eDAI");
         uint256 balanceSender = abi.decode(accountAmount, (uint256));
 
-       (bool makeCoins,) = eDAI.call(abi.encodeWithSignature("lever(address,uint256)", msg.sender, (balanceSender * increase)));
-       require(makeCoins, "Failed to make eDAI and dDAI for leverage");
+        if(startingAmount == 0)
+        {
+            multiplyerTable[msg.sender] = balanceSender;
+            uint256 createEDAI = (balanceSender * multiplyer) - balanceSender;
+            uint256 createDDAI = (balanceSender * multiplyer);
+            (bool makeCoins,) = eDAI.call(abi.encodeWithSignature("lever(address,uint256,uint256)", msg.sender, createEDAI,createDDAI));
+            require(makeCoins, "Failed to make eDAI and dDAI for leverage");
+        }
+        else
+        {
+            uint256 amountWithMul = startingAmount * multiplyer;
+            uint256 difference = amountWithMul - balanceSender;
+            (bool makeCoins,) = eDAI.call(abi.encodeWithSignature("lever(address,uint256,uint256)", msg.sender, difference,difference));
+            require(makeCoins, "Failed to make eDAI and dDAI for already leveraged account");
+        }
+    }
+    
+    function resetInitialBalance(address account) public
+    {
+        require(msg.sender == eDAI, "Only eDAI contract can call");
+        multiplyerTable[account] = 0;
 
     }
 
