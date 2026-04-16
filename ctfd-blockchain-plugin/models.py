@@ -19,8 +19,9 @@ SCORE_MASK      = 2147483647
 # vuln_id must be a power of 2 matching proxy.vuln_gen[vuln_id]:
 #         1  = Reentrancy Easy
 #         2  = Reentrancy Hard
-#         4  = TBD
-#         8  = TBD
+#         4  = Integer Overflow
+#         8  = Gas Grieving Attack
+#         16 = Flash Loan Attack
 class BlockchainChallengeModel(Challenges):
     __tablename__ = "blockchain_challenges"
     __mapper_args__ = {"polymorphic_identity": "blockchain"}
