@@ -59,9 +59,9 @@ CTFd._internal.challenge.submit = function(preview) {
             <div class="bc-step-card">
                 <h6>Step 3 - Exploit &amp; Verify</h6>
                 <p class="text-muted small">
-                    Exploit your instance. The contract calls
-                    <code>proxy.increment_score(vuln_id, player)</code> on completion.
-                    Your wallet address will be filled in automatically - just click Submit.
+                    Exploit the vulnerable contract. Then, unless specified otherwise, call the powned() function in your vulnerable contract. 
+                    Finally, click below to check your score.
+                    
                 </p>
                 <button id="bc-verify-btn" class="btn btn-outline-success btn-sm" disabled>
                     Check On-Chain Status
