@@ -1287,14 +1287,14 @@ contract DAOFactoryTwo
     ///@notice This contract and all factory contracts are owned by the proxy contract. Only the proxy contract should be able to create a new clone of the vulnerable contract
     ///@notice This function is only callable by the proxy contract and creates a new DAO smart contract
     ///@notice All value sent to function by proxy is passed onto the newly created vuln contract
-    ///@notice new DAO is created with: curator = owner , daoCreator = owner , proposalDeposit = 2222 , minTokensToCreate = 5000 wei equivalent tokens , closingTime =  5 mins from now  ,  privateCreation = 0 (means the creation is public) , proxy = owner , contractID = 1
+    ///@notice new DAO is created with: curator = owner , daoCreator = owner , proposalDeposit = 2222 , minTokensToCreate = 5000 wei equivalent tokens , closingTime =  5 mins from now  ,  privateCreation = 0 (means the creation is public) , proxy = owner , contractID = 2
     function create() external payable returns (address)
     {
         if(msg.sender != owner)
         {
             throw;
         }
-        DAO newReEntrancy = new DAO(msg.sender, DAOFactoryTwo(this), 2222, 5000,block.timestamp+300, 0x0000000000000000000000000000000000000000, 0x5FbDB2315678afecb367f032d93F642f64180aa3,1);
+        DAO newReEntrancy = new DAO(msg.sender, DAOFactoryTwo(this), 2222, 5000,block.timestamp+300, 0x0000000000000000000000000000000000000000, 0x5FbDB2315678afecb367f032d93F642f64180aa3,2);
         newReEntrancy.call.value(msg.value)(); //deposit function in vulnerable contract
         return address(newReEntrancy);
     }
