@@ -31,7 +31,7 @@ contract euler
     {
 
         uint256 reward = liquidateOptions[account]; //get the liquidation rate
-        require(reward > 12, "Can not liquidate a solivent account"); //must be greater than 12 meaning that the account must have 125% dDAI to eDAI
+        require(reward >= 12, "Can not liquidate a solivent account"); //must be at least 12 meaning that the account must have 120% dDAI to eDAI
         (bool getAmount, bytes memory accountAmount) = eDAI.call(abi.encodeWithSignature("balanceOf(address)", account));  //get the balance of the unsolivent account
         require(getAmount, "Could not get the bad account's balance of eDAI");
 
@@ -52,9 +52,10 @@ contract euler
         require(success1, "Did not get eDAI balance");
         uint256 amountE = abi.decode(eBalance, (uint256));
 
-         (bool success2,bytes memory dBalance) = dDAI.call(abi.encodeWithSignature("balanceOf(address)", account));
+        (bool success2,bytes memory dBalance) = dDAI.call(abi.encodeWithSignature("balanceOf(address)", account));
         require(success2, "Did not get dDAI balance");
-         uint256 amountD = abi.decode(dBalance, (uint256));
+        uint256 amountD = abi.decode(dBalance, (uint256));
+
         if(amountD != 0)
         {
             uint256 eToD = (amountE * 100) / amountD;
