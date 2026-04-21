@@ -40,8 +40,8 @@ Using Foundry Anvil allows for quick setup on home sweet home (127.0.0.1)
 
 https://www.getfoundry.sh/introduction/getting-started
 
-- **Moving shell script** Once you make a Foundry project with `forge init PROJECT_NAME`, place `setUPContracts.sh` in the home directory of this project (parent directory of \src folder)
-- **Move Folders and proxy** Move Challenge folders and `proxy.sol` to `\src` folder of the Foundry project
+- **Moving shell script** Once you make a Foundry project with `forge init PROJECT_NAME`, place `setUPContracts.sh` in the home directory of this project (parent directory of `\src` folder)
+- **Move Folders and proxy** Move Challenge folders and `proxy.sol` to `\src` folder of this Foundry project
 - **Deploying Smart Contracts** Run `setUPContracts.sh` to deploy contracts
 
 ### Using MetaMask for Smarties
