@@ -33,7 +33,10 @@ Once you have the challenge created, click on `CTFd` and then `Challenges` to se
 
 Clicking on said child will reveal the awesome modal that should work once all your contracts are deployed to the chain with the correct vuln_id. 
 
-For Information on deploying a local ethereum node using Foundry (this allows the hole challange ecosystem to be hosted on home sweet home (127.0.0.1) ):
+For Information on deploying a local ethereum node using Foundry:
+
+Using Foundry Anvil allows for quick setup on home sweet home (127.0.0.1
+
 [Link Text]https://www.getfoundry.sh/introduction/getting-started
 
 The only step left now is connecting that sweet $Bling-Bling$ that is your MetaMask wallet.
