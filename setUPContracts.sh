@@ -42,7 +42,7 @@ proxyAddress=${proxyPartial:0:42}
 
 
 #Make dDAI Contract
-dDAI=$(forge create src/dDAI.sol:DToken --private-key "$private_key" --broadcast --constructor-args "$public_key" --rpc-url "$rpc_url")
+dDAI=$(forge create src/Challenge_5/dDAI.sol:DToken --private-key "$private_key" --broadcast --constructor-args "$public_key" --rpc-url "$rpc_url")
 
 if [ $? -ne 0 ]; then
         echo "Failed to create dDAI contract"
@@ -53,7 +53,7 @@ dDAIPartial=${dDAI##*"Deployed to: "}
 dDAIAddress=${dDAIPartial:0:42}
 
 #Make euler Contract
-euler=$(forge create src/euler.sol:euler --private-key "$private_key" --broadcast --constructor-args "$public_key" "$dDAIAddress" --rpc-url "$rpc_url")
+euler=$(forge create src/Challenge_5/euler.sol:euler --private-key "$private_key" --broadcast --constructor-args "$public_key" "$dDAIAddress" --rpc-url "$rpc_url")
 
 if [ $? -ne 0 ]; then
         echo "Failed to create euler contract"
@@ -65,7 +65,7 @@ eulerPartial=${euler##*"Deployed to: "}
 eulerAddress=${eulerPartial:0:42}
 
 #Make lender Contract
-lender=$(forge create src/lender.sol:lender --private-key "$private_key" --broadcast --constructor-args "$public_key" "$proxyAddress" --rpc-url "$rpc_url")
+lender=$(forge create src/Challenge_5/lender.sol:lender --private-key "$private_key" --broadcast --constructor-args "$public_key" "$proxyAddress" --rpc-url "$rpc_url")
 
 if [ $? -ne 0 ]; then
         echo "Failed to create lender contract"
@@ -85,7 +85,7 @@ if [ $? -ne 0 ]; then
 fi
 
 #Make sDAI Contract
-sDAI=$(forge create src/sDAI.sol:sDAI --private-key "$private_key" --broadcast --constructor-args "$public_key" "$lenderAddress" --rpc-url " $rpc_url")
+sDAI=$(forge create src/Challenge_5/sDAI.sol:sDAI --private-key "$private_key" --broadcast --constructor-args "$public_key" "$lenderAddress" --rpc-url " $rpc_url")
 
 if [ $? -ne 0 ]; then
         echo "Failed to create sDAI contract"
@@ -97,7 +97,7 @@ sDAIPartial=${sDAI##*"Deployed to: "}
 sDAIAddress=${sDAIPartial:0:42}
 
 #Make eDAI Contract
-eDAI=$(forge create src/eDAI.sol:EToken --private-key "$private_key" --broadcast --constructor-args "$sDAIAddress" "$eulerAddress" "$dDAIAddress" --rpc-url " $rpc_url")
+eDAI=$(forge create src/Challenge_5/eDAI.sol:EToken --private-key "$private_key" --broadcast --constructor-args "$sDAIAddress" "$eulerAddress" "$dDAIAddress" --rpc-url " $rpc_url")
 
 if [ $? -ne 0 ]; then
         echo "Failed to create eDAI"
@@ -150,7 +150,7 @@ if [ $? -ne 0 ]; then
 fi
 
 #Make DAOFactory Contract
-daoEasy=$(forge create src/DAOFactory.sol:DAOFactory --private-key "$private_key" --broadcast --rpc-url " $rpc_url")
+daoEasy=$(forge create src/Challenge_1/DAOFactory.sol:DAOFactory --private-key "$private_key" --broadcast --rpc-url " $rpc_url")
 
 if [ $? -ne 0 ]; then
         echo "Failed to create DAOFactory for the easy Re-entrancy attack"
@@ -170,7 +170,7 @@ if [ $? -ne 0 ]; then
 fi
 
 #Make DAOFactoryTwo Contract
-daoHard=$(forge create src/DAOFactoryTwo.sol:DAOFactoryTwo --private-key "$private_key" --broadcast --rpc-url " $rpc_url")
+daoHard=$(forge create src/Challenge_2/DAOFactoryTwo.sol:DAOFactoryTwo --private-key "$private_key" --broadcast --rpc-url " $rpc_url")
 
 if [ $? -ne 0 ]; then
     echo "Failed to create DAOFactoryTwo for the hard Re-entrancy attack"
@@ -190,7 +190,7 @@ if [ $? -ne 0 ]; then
 fi
 
 #Make gas Contract
-gas=$(forge create src/gas.sol:GasGriefingFactory --private-key "$private_key" --broadcast --rpc-url " $rpc_url")
+gas=$(forge create src/Challenge_4/gas.sol:GasGriefingFactory --private-key "$private_key" --broadcast --rpc-url " $rpc_url")
 
 if [ $? -ne 0 ]; then
     echo "Failed to create gas contract"
@@ -210,7 +210,7 @@ if [ $? -ne 0 ]; then
 fi
 
 #Make overflow Contract
-overflow=$(forge create src/overflow.sol:IntegerOverflowFactory --private-key "$private_key" --broadcast --rpc-url " $rpc_url")
+overflow=$(forge create src/Challenge_3/overflow.sol:IntegerOverflowFactory --private-key "$private_key" --broadcast --rpc-url " $rpc_url")
 
 if [ $? -ne 0 ]; then
     echo "Failed to create overflow contract"
