@@ -17,6 +17,7 @@ Here marks the end of the Declaration of Independence. I hope you enjoyed it. Be
 ૮₍˶Ó﹏Ò ⑅₎ა 
 
 ### Creating a Challenge
+
 When you first log in to CTFd, it should ask you to set up the instance and create an admin account. I suggest just making that account `admin:admin` (🏸) so you don't forget it (OH NO DEFAULT CREDENTIALS RUNNNN  \\(˚☐˚”)/)
 
 So you made it past the login screen? Good job clanker. Now we should make a challenge. To do this, click on the fancy `Admin Panel` button and then click on `Challenges`. You might be smarter than me, so you probably found it already, but in case you are blind like me, click on the plus sign to create a new challenge. Then under `Challenge Types` select `blockchain`. Here is what your screen should look like right now:
@@ -35,9 +36,9 @@ Most of the fields are self-explanatory, but there are a few that are goofy:
 
 ### For Information on deploying a local ethereum node using Foundry:
 
-Using Foundry Anvil allows for quick setup on home sweet home (127.0.0.1
+Using Foundry Anvil allows for quick setup on home sweet home (127.0.0.1)
 
-[Link Text]https://www.getfoundry.sh/introduction/getting-started
+https://www.getfoundry.sh/introduction/getting-started
 
 ### Using MetaMask for Smarties
 
