@@ -26,7 +26,7 @@ Most of the fields are self-explanatory, but there are a few that are goofy:
 - **Value:** This is only for the CTFd scoring purposes; you can make it the vuln_id if you want, or you can make it 0, it doesn't really matter.
 - **Proxy Contract Address** This is the address that your proxy deployed to.
 - **Chain ID** This is the ID of the chain everything is deployed on, I've been setting my Anvil to have ID 1337 bc it's l33t, but it should work with any chain ID you want.
-- **RPC URL** If you are using a localhost chain, the RPC needs to be `httIn order to use MetaMask with an Anvil chain, we gotta do some fun things. First, find wherever you have hardcoded your password (mine's in a clear-text markdown file, dw), and log in. Next, navigate to Manage networks and + Add a custom network to fill in your Anvil chain info. Assuming you nailed that step, go to your accounts and hit Add Wallet followed by Import an account. Then use one of the Anvil private keys for the account (NOT a private key you used for contract deployment). BAM, you should be ready to hack.p://host.docker.internal:8545` so your Docker can correctly talk to the chain!
+- **RPC URL** If you are using a localhost chain, the RPC needs to be `http://host.docker.internal:8545` so your Docker can correctly talk to the chain!
 
 - Assuming we survived the above, when you hit the bright blue `Create` button, it will ask you for a flag value; just leave it blank.
 
