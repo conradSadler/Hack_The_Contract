@@ -47,4 +47,6 @@ The only step left now is connecting that sweet $Bling-Bling$ that is your MetaM
 In order to use MetaMask with an Anvil chain, we gotta do some fun things. First, find wherever you have hardcoded your password (mine's in a clear-text markdown file, dw), and log in. Next, navigate to `Manage networks` and `+ Add a custom network` to fill in your Anvil chain info. Assuming you nailed that step, go to your accounts and hit `Add Wallet` followed by `Import an account`. Then use one of the Anvil private keys for the account (NOT a private key you used for contract deployment). BAM, you should be ready to hack.
 
 ### Tech Support
-Operating hours are 9AM-10PM most days. Outside of business hours, please fill out a ticket: https://forms.gle/omdWBZ2CKqH3psvM8
+Operating hours are 9AM-10PM most days. Outside of business hours, please fill out a ticket
+
+https://forms.gle/omdWBZ2CKqH3psvM8
