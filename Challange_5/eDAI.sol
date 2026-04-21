@@ -42,8 +42,6 @@ contract EToken  is ERC20,ReentrancyGuard
             actualE = amountE / multiplyer; //20/10=2
         }
 
-        // /resetInitialBalance(address account)
-
         (bool rmBalance, ) = euler.call(abi.encodeWithSignature("resetInitialBalance(address)",msg.sender));
         require(rmBalance, "Did not zero out account balance in euler contract");
 
@@ -102,6 +100,7 @@ contract EToken  is ERC20,ReentrancyGuard
 
         _mint(account,eDAIGained);
     }
+
     /// @notice Donate eTokens to the reserves
     /// @param amount In internal book-keeping units (as returned from balanceOf).
     function donateToReserves(uint256 amount) external nonReentrant 
