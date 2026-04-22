@@ -1,10 +1,10 @@
 **Make liquidator assumed deployed to liquidator**
 
-forge create src/liquidate.sol:liquidate --private-key PRIVATE_KEY --broadcast --constructor-args euler eDAI lender 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 22000000 30000000
+forge create src/Challenge_5/liquidate.sol:liquidate --private-key PRIVATE_KEY --broadcast --constructor-args euler eDAI lender 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 22000000 30000000
 
 **Create donate contract**
 
-forge create src/donate.sol:donate --private-key PRIVATE_KEY --broadcast --constructor-args 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 euler lender eDAI sDAI liquidator 27000000 30000000 18 27000000
+forge create src/Challenge_5/donate.sol:donate --private-key PRIVATE_KEY --broadcast --constructor-args 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 euler lender eDAI sDAI liquidator 27000000 30000000 18 27000000
 
 **link lender contract to player, WE DO NOT GENERATE A NEW LENDOR CONTRACT PER PLAYER**
 
